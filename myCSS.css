@@ -1,0 +1,73 @@
+#playArea {
+ display: grid;
+ grid-template: 33vh 33vh 33vh / 75vw 25vw;
+}
+
+#inactivePlayer {
+    border: 4px dotted red;
+    grid-area: 1 / 1 / 1 / 2;
+    display: grid;
+    grid-template: 1fr / 1fr 3fr 1fr;
+}
+
+#inactiveDraw {
+    border: 2px solid black;
+}
+
+#inactiveMonsters {
+    display: flex;
+    border: 2px solid black;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#activePlayer {
+    border: 4px dotted blue;
+    grid-area: 2 / 1 / 4 / 2;
+    display: grid;
+    grid-template: 50% 50% / 20% 60% 20%;
+}
+
+#activeDiscard {
+    border: 2px solid green;
+    grid-area: 1 / 1 / 3 / 2;
+}
+
+#activeMonsters {
+    border: 2px solid royalblue;
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+#activeHand {
+    border: 2px solid hotpink;
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+#activeDraw {
+    border: 2px solid greenyellow;
+    grid-area: 1 / 3 / 3 / 4;
+}
+
+#pickableCards_sideBar {
+    border: 4px dotted green;
+    grid-area: 1 / 2 / 4 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#inactivePlayer img {
+    width: 7vw;
+    height: auto;
+}
+
+#activePlayer img {
+    width: 8vw;
+    height: auto;
+}
+
+#pickableCards_sideBar img {
+    width: 8vw;
+    height: auto;
+}
