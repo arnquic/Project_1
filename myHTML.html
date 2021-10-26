@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deck</title>
-    <link rel="stylesheet" href="styles/myCSS.css">
-    <script src="scripts/myCode.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="scripts/main.js"></script>
     <script src="scripts/classes.js"></script>
 </head>
 
@@ -15,53 +15,71 @@
     <header>
 
     </header>
-    <section id="playArea">
-        <section id="inactivePlayer">
-            <section id="inactiveDraw">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+    <section id="gameViewPort">
+        <section id="info">
+            <section id="gameStateIndicator">
+                <p id="playerTurnIndicator">It is player1's turn.</p>
+                <p id="turnStateIndicator">Select a card from your hand to play.</p>
             </section>
-            <section id="inactiveMonsters">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+            <section id="howToPlay">
+                <button id="howToPlayBtn">How To Play</button>
             </section>
-            <section id="inactiveDiscard">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-            </section>
-        </section>
-        <section id="activePlayer">
-            <section id="activeDiscard">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-            </section>
-            <section id="activeMonsters">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-            </section>
-            <section id="activeHand">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-                <img src="assets/defenseCards/Shield Plus 1.png" />
-            </section>
-            <section id="activeDraw">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+            <section id="reset">
+                <button id="resetBtn">Reset</button>
             </section>
         </section>
-        <section id="pickableCards_sideBar">
-            <section id="attPick">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+        <section id="mainGameBoard">
+            <section id="inactivePlayer">
+                <section id="inactivePlayerDraw">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
+                <section id="inactivePlayerMonsters">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
+                <section id="inactivePlayerDiscard">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
             </section>
-            <section id="defPick">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+            <section id="activePlayer">
+                <section id="activePlayerDiscard">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
+                <section id="activePlayerMonsters">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
+                <section id="activePlayerHand">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
+                <section id="activePlayerDraw">
+                    <img src="assets/defenseCards/Shield Plus 1.png" />
+                </section>
             </section>
-            <section id="spclPick">
-                <img src="assets/defenseCards/Shield Plus 1.png" />
+            <section id="rightSideBar">
+                <section id="pickableCards">
+                    <section id="attPick">
+                        <img src="assets/defenseCards/Shield Plus 1.png" />
+                    </section>
+                    <section id="defPick">
+                        <img src="assets/defenseCards/Shield Plus 1.png" />
+                    </section>
+                    <section id="spclPick">
+                        <img src="assets/defenseCards/Shield Plus 1.png" />
+                    </section>
+                </section>
+                <section id="nextState">
+                    <button id="nextStateBtn">End Phase</button>
+                </section>
             </section>
         </section>
     </section>
-
 </body>
 
 </html>

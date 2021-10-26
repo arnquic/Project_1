@@ -1,6 +1,48 @@
-#playArea {
- display: grid;
- grid-template: 33vh 33vh 33vh / 75vw 25vw;
+#gameViewPort {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template: 7% 93% / 100%;
+}
+
+#info {
+    grid-area: 1 / 1 / 2 / 2;
+    display: grid;
+    grid-template: 100% / 50% 25% 25%;
+}
+
+#gameStateIndicator {
+    border: 2px solid black;
+    grid-area: 1 / 1 / 2 / 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#howToPlay {
+    border: 2px solid black;
+    grid-area: 1 / 2 / 2 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#reset {
+    border: 2px solid black;
+    grid-area: 1 / 3 / 2 / 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#mainGameBoard {
+    grid-area: 2 / 1 / 3 / 2;
+    display: grid;
+    grid-template: 33% 33% 33% / 75% 25%;
 }
 
 #inactivePlayer {
@@ -10,16 +52,25 @@
     grid-template: 1fr / 1fr 3fr 1fr;
 }
 
-#inactiveDraw {
+#inactivePlayerDraw {
     border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#inactiveMonsters {
+#inactivePlayerMonsters {
     display: flex;
     border: 2px solid black;
     justify-content: center;
     align-items: center;
     
+}
+
+#inactivePlayerDiscard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #activePlayer {
@@ -29,32 +80,62 @@
     grid-template: 50% 50% / 20% 60% 20%;
 }
 
-#activeDiscard {
+#activePlayerDiscard {
     border: 2px solid green;
     grid-area: 1 / 1 / 3 / 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#activeMonsters {
+#activePlayerMonsters {
     border: 2px solid royalblue;
     grid-area: 1 / 2 / 2 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#activeHand {
+#activePlayerHand {
     border: 2px solid hotpink;
     grid-area: 2 / 2 / 3 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#activeDraw {
+#activePlayerDraw {
     border: 2px solid greenyellow;
     grid-area: 1 / 3 / 3 / 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#pickableCards_sideBar {
+#rightSideBar {
     border: 4px dotted green;
-    grid-area: 1 / 2 / 4 / 2;
+    grid-area: 1 / 2 / 4 / 3;
+    display: grid;
+    grid-template: 75% 25% / 100%;
+}
+
+#pickableCards {
+    border: 2px solid gold;
+    grid-area: 1 / 1 / 2 / 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 4%;
+}
+
+#nextState {
+    border: 2px solid black;
+    grid-area: 2 / 1 / 3 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #inactivePlayer img {
@@ -67,7 +148,7 @@
     height: auto;
 }
 
-#pickableCards_sideBar img {
+#pickableCards img {
     width: 8vw;
     height: auto;
 }

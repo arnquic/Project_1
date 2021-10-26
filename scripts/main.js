@@ -16,7 +16,8 @@ const GAME_STATES = [
 ];
 
 // Global State Variables
-let playerTurn;
+let activePlayer;
+let inactivePlayer;
 let currentGameState;
 let lastGameState;
 let handCardsToPlay;
@@ -49,10 +50,19 @@ function init() {
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
-        playerTurn = player1;
+        activePlayer = player1;
+        inactivePlayer = player2;
     } else {
         playerTurn = player2;
+        inactivePlayer = player1;
     }
+}
+
+// Called at end of discard state (when turn change occurs).
+function swapActivePlayer() {
+    let tempPlayer = activePlayer;
+    activePlayer = inactivePlayer;
+    inactivePlayer = tempPlayer;
 }
 
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
@@ -76,26 +86,43 @@ function gameStateChange(destinationState, stateException) {
             }
             // Current game state = CHOOSE A MONSTER TO PERFORM AN ACTION
         } else if (currentGameState === GAME_STATES[3]) {
-            // 
+            // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
             if (!stateException) {
                 currentGameState = GAME_STATES[4];
             } else if (stateException) {
                 currentGameState = GAME_STATES[7];
             }
+
             // Current game state = CHOOSE A MONSTER ACTION TO PERFORM
         } else if (currentGameState === GAME_STATES[4]) {
             currentGameState = GAME_STATES[5];
             // Current game state = CHOOSE AN ENEMY MONSTER AS THE ACTION TARGET
         } else if (currentGameState === GAME_STATES[5]) {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < inactivePlayer.monsters.length; i++) {
+                if (inactivePlayer.monsters[i].isActive) {
+                    currentGameState = GAME_STATES[6];
+                }
 
             }
-            currentGameState = GAME_STATES[]
-
+            if (!stateException) {
+                currentGameState = GAME_STATES[6];
+            } else if (stateException) {
+                currentGameState = GAME_STATES[]
+            }
             // Current game state = OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND
         } else if (currentGameState === GAME_STATES[6]) {
-            currentGameState = GAME_STATES[]
-
+            // Check whether any active monsters remain for the active player to use.
+            let anyActive = false;
+            for (let i = 0; i < activePlayer.monster.length; i++) {
+                if (activePlayer.monsters[i].isActive) {
+                    anyActive = true;
+                }
+            }
+            if (anyActive) {
+                currentGameState = GAME_STATES[3];
+            } else if (!anyActive) {
+                currentGameState = GAME_STATES[7];
+            }
             // Current game state = DISCARD
         } else if (currentGameState === GAME_STATES[7]) {
             currentGameState = GAME_STATES[]

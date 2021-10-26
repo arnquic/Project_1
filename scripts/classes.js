@@ -140,9 +140,11 @@ class Player {
         // Shuffles the starter deck upon creation of a new player.
         this.deck.shuffleStarterDeck();
 
-        this.monster1 = new Monster('assets/monsters/monster1.png');
-        this.monster2 = new Monster('assets/monsters/monster2.png');
-        this.monster3 = new Monster('assets/monsters/monster3.png');
+        this.monsters = [
+            new Monster('assets/monsters/monster1.png'),
+            new Monster('assets/monsters/monster2.png'),
+            new Monster('assets/monsters/monster3.png')
+        ];
     }
 }
 
