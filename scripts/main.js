@@ -67,16 +67,6 @@ function init() {
     activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
 }
 
-function handleClick(event) {
-    if (event.target === howToPlayBtn) {
-
-    } else if (event.target === resetBtn) {
-
-    } else if (event.target === activePlayerDrawEl) {
-
-    }
-}
-
 function updateGameStateIndicators() {
     activePlayerIndicatorEl.innerHTML = `It's ${activePlayer.name}'s turn.`;
     turnStateIndicatorEl.innerHTML = `${currentGameState}`;
