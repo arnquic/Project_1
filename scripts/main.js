@@ -1,6 +1,6 @@
 console.log("I'm linked to the HTML.");
 
-// ------------  MODEL  --------------
+// -------------------------  MODEL  --------------------------------
 // Global Constants
 const GAME_STATES = [
     'DRAW',
@@ -27,20 +27,30 @@ let player1;
 let player2;
 
 
+// ---------------------------  VIEW  ---------------------------------
+// Cache re-usable DOM elements.
+// + Info bar elements
+let activePlayerIndicatorEl = document.getElementById('playerTurnIndicator');
+let turnStateIndicatorEl = document.getElementById('turnStateIndicator');
+let howToPlayBtn = document.getElementById('howToPlayBtn');
+let resetBtn = document.getElementById('resetBtn');
+// + Inactive player elements
+let inactivePlayerDrawEl = document.getElementById('inactivePlayerDraw');
+let inactivePlayerMonstersEl = document.getElementById('inactivePlayerMonsters');
+let inactivePlayerDiscardEl = document.getElementById('inactivePlayerDiscard');
+// + Active player elements
+let activePlayerDrawEl = document.getElementById('activePlayerDraw');
+let activePlayerMonstersEl = document.getElementById('activePlayerMonsters');
+let activePlayerDiscardEl = document.getElementById('activePlayerDiscard');
+let activePlayerHandEl = document.getElementById('activePlayerHand');
+// + Right sidebar elements
+let attPickEl = document.getElementById('attPick');
+let defPickEl = document.getElementById('defPick');
+let spclPickEl = document.getElementById('spclPick');
+let nextStateBtn = document.getElementById('nextStateBtn');
 
 
-
-
-
-// ------------  VIEW  ---------------
-
-
-
-
-
-
-
-// ---------  CONTROLLER  -----------
+// -------------------------  CONTROLLER  ------------------------------
 function init() {
     player1 = new Player('Jake');
     player2 = new Player('Anna');
