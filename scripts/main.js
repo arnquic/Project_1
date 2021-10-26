@@ -19,6 +19,7 @@ const GAME_STATES = [
 let currentGameState;
 let lastGameState;
 let handCardsToPlay;
+let selectedCard;
 // + Players
 let activePlayer;
 let inactivePlayer;
@@ -54,6 +55,7 @@ function init() {
     currentGameState = GAME_STATES[0];
     lastGameState = null;
     handCardsToPlay = 3;
+    selectedCard = null;
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
@@ -93,11 +95,7 @@ function changeGameState(event, destinationState, stateException) {
             selectHandCard_StateChange(event);
             // Current game state = SELECT AN ALLIED MONSTER TO PLAY THE CARD ON
         } else if (currentGameState === GAME_STATES[2]) {
-            if (handCardsToPlay > 0) {
-                currentGameState = GAME_STATES[1];
-            } else {
-                currentGameState = GAME_STATES[3];
-            }
+            selectMonsterToPlayCardOn_StateChange(event);
             // Current game state = SELECT AN ALLIED MONSTER TO PERFORM AN ACTION
         } else if (currentGameState === GAME_STATES[3]) {
             // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
@@ -192,6 +190,13 @@ function selectHandCard_StateChange(event) {
     for (let i = 0; i < activePlayer.deck.hand.length; i++) {
         if (event.target === activePlayerHandEl.children[i]) {
             if (activePlayer.deck.hand[i].isActive) {
+                // Set the selected card as the, well... selected card.
+                selectedCard = activePlayer.deck.hand[i];
+                // Make the card inactive so that it cannot be played again. Also make that inactive status visible by changing the selected card's opacity.
+                activePlayer.deck.hand[i].isActive = false;
+                event.target.style.opacity = 0.6;
+                // Decrement the numbers of cards yet to be played.
+                handCardsToPlay--;
                 // Advance the game state to the "SELECT AN ALLIED MONSTER TO PLAY THE CARD ON" state.
                 currentGameState = GAME_STATES[2];
                 // Activate the event listener for the next state.
@@ -202,12 +207,38 @@ function selectHandCard_StateChange(event) {
             }
         }
     }
-
-
 }
 
 function selectMonsterToPlayCardOn_StateChange(event) {
+    // Deactive the event listener for this state.
+    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
 
+    // Check which monster was selected.
+    for (let i = 0; i < activePlayer.monsters.length; i++) {
+        if (event.target === activePlayerMonstersEl.children[i]) {
+            // If the selected monster's health is below 0 (zero), then don't allow the card to be played on that monster and wait for another monster to be selected.
+            if (activePlayer.monsters[i].health === 0) {
+                // Reactivate the monster event listener to wait for another monster to be clicked.
+                activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+                // If the selected monster's health is above 0 (zero), then play the card on that monster.
+            } else if (activePlayer.monsters[i].health > 0) {
+                if (selectedCard.type === 'attack') {
+                    activePlayer.monsters[i].increaseAttack(selectedCard.amount);
+                } else if (selectedCard.type === 'defense') {
+                    activePlayer.monsters[i].increaseDefense(selectedCard.amount);
+                }
+
+                // Activate the event listener for the next game state.
+                if (handCardsToPlay > 0) {
+                    currentGameState = GAME_STATES[1];
+                    activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+                } else if (handCardsToPlay <= 0) {
+                    currentGameState = GAME_STATES[3];
+                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+                }
+            }
+        }
+    }
 }
 
 function selectMonsterToPerformAction_StateChange(event) {

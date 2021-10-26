@@ -7,7 +7,7 @@ class Card {
         this.backImgSrc = backImgSrc;
 
         // Indicates whether or not the card can be played. Is made true when a card is drawn. Is made false again after being played, or when being discarded.
-        this.isPlayable = false;
+        this.isActive = false;
     }
 }
 
@@ -40,7 +40,7 @@ class Deck {
         for (let i = 0; i <= 4; i++) {
             this.hand.push(this.drawPile.shift());
             // When moving a card from the draw pile to the hand, make it playable.
-            this.hand[i].isPlayable = true;
+            this.hand[i].isActive = true;
             // Shuffle the discard pile and place it in the draw pile if no cards remain in the draw pile.
             if (this.drawPile.length === 0) {
                 this.discardToDraw();
@@ -57,7 +57,7 @@ class Deck {
     discard() {
         for (let i = 0; i < this.hand.length; i++) {
             // Ensure that all cards in the discard pile are not playable, whether or not the player played them during the "Monster Supplement" turn state.
-            this.hand[i].isPlayable = false;
+            this.hand[i].isActive = false;
             this.discardPile.push(this.hand[i]);
         }
         this.hand = [];
