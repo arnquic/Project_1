@@ -82,7 +82,7 @@ function swapActivePlayer() {
 }
 
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
-function changeGameState(event, destinationState, stateException) {
+/* function changeGameState(event, destinationState, stateException) {
     // User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
         howTo_StateChange(destinationState);
@@ -149,7 +149,7 @@ function changeGameState(event, destinationState, stateException) {
     } else if (destinationState === 'GAME OVER') {
         currentGameState = GAME_STATES[0];
     }
-}
+} */
 
 function howTo_StateChange(destinationState) {
     // Executes on howToPlayBtn click. User wants the instructions to be displayed.

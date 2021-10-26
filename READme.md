@@ -134,6 +134,9 @@ How to technically fulfill the game (e.g., function to deal cards)
 
 ## Sources
     1. Attack card's "kick" icon is taken from "Icons 8" at: https://icons8.com/icon/11549/combat
+    2. Monster 1's image is taken from "Icons 8" at: https://icons8.com/icon/3upVYuQvJuuB/monster-face
+    3. Monster 2's image is taken from "Icons 8" at: https://icons8.com/icon/Hgs0qUeISUyd/monster
+    4. Monster 3's image is taken from "Icons 8" at: https://img.icons8.com/ios/50/000000/mongrol.png
 
 ### <u>Intellectual Property Claim</u>
 Created and owned by C. Jake Arnquist as of date of first github commit (12 Oct. 2021).
