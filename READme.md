@@ -132,6 +132,8 @@ How to technically fulfill the game (e.g., function to deal cards)
 ## Super Stretch Goal
 * Option for AI opponent.
 
+## Sources
+    1. Attack card's "kick" icon is taken from "Icons 8" at: https://icons8.com/icon/11549/combat
 
 ### <u>Intellectual Property Claim</u>
 Created and owned by C. Jake Arnquist as of date of first github commit (12 Oct. 2021).

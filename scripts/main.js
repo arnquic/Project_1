@@ -4,8 +4,8 @@ console.log("I'm linked to the HTML.");
 // Global Constants
 const GAME_STATES = [
     'DRAW',
-    'CHOOSE A HAND CARD TO PLAY',
-    'CHOOSE ALLIED MONSTER TO PLAY CARD ON',
+    'SELECT A CARD FROM YOUR HAND TO PLAY',
+    'CHOOSE AN ALLIED MONSTER TO PLAY THE CARD ON',
     'CHOOSE A MONSTER TO PERFORM AN ACTION',
     'CHOOSE A MONSTER ACTION TO PERFORM',
     'CHOOSE AN ENEMY MONSTER AS THE ACTION TARGET',
@@ -16,15 +16,12 @@ const GAME_STATES = [
 ];
 
 // Global State Variables
-let activePlayer;
-let inactivePlayer;
 let currentGameState;
 let lastGameState;
 let handCardsToPlay;
-
-// Players
-let player1;
-let player2;
+// + Players
+let activePlayer;
+let inactivePlayer;
 
 
 // ---------------------------  VIEW  ---------------------------------
@@ -44,28 +41,45 @@ let activePlayerMonstersEl = document.getElementById('activePlayerMonsters');
 let activePlayerDiscardEl = document.getElementById('activePlayerDiscard');
 let activePlayerHandEl = document.getElementById('activePlayerHand');
 // + Right sidebar elements
-let attPickEl = document.getElementById('attPick');
-let defPickEl = document.getElementById('defPick');
-let spclPickEl = document.getElementById('spclPick');
+let pickableCardsEl = document.getElementById('pickableCards');
 let nextStateBtn = document.getElementById('nextStateBtn');
 
 
 // -------------------------  CONTROLLER  ------------------------------
+// Set function to run on page load
+window.addEventListener('onload', init);
+
+// Initialization function to be called on page load.
 function init() {
-    player1 = new Player('Jake');
-    player2 = new Player('Anna');
     currentGameState = GAME_STATES[0];
     lastGameState = null;
     handCardsToPlay = 3;
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
-        activePlayer = player1;
-        inactivePlayer = player2;
-    } else {
-        playerTurn = player2;
-        inactivePlayer = player1;
+        activePlayer = new Player('Jake');
+        inactivePlayer = new Player('Anna');
+    } else if (randomPlayer === 2) {
+        activePlayer = new Player('Anna');
+        inactivePlayer = new Player('Jake');
     }
+    updateGameStateIndicators();
+    activePlayerDrawEl.addEventListener('click', changeGameState('NEXT'));
+}
+
+function handleClick(event) {
+    if (event.target === howToPlayBtn) {
+
+    } else if (event.target === resetBtn) {
+
+    } else if (event.target === activePlayerDrawEl) {
+
+    }
+}
+
+function updateGameStateIndicators() {
+    activePlayerIndicatorEl.innerHTML = `It's ${activePlayer.name}'s turn.`;
+    turnStateIndicatorEl.innerHTML = `${currentGameState}`;
 }
 
 // Called at end of discard state (when turn change occurs).
@@ -76,14 +90,14 @@ function swapActivePlayer() {
 }
 
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
-function gameStateChange(destinationState, stateException) {
-    // Current game state = DRAW
+function changeGameState(destinationState, stateException) {
+    // User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
-        lastGameState = currentGameState;
-        currentGameState = GAME_STATES[9];
+        howToStateChange(destinationState);
     } else if (destinationState === 'NEXT') {
+        // Current game state = DRAW
         if (currentGameState === GAME_STATES[0]) {
-            currentGameState = GAME_STATES[1];
+            drawStateChange();
             // Current game state = CHOOSE A HAND CARD TO PLAY
         } else if (currentGameState === GAME_STATES[1]) {
             currentGameState = GAME_STATES[2];
@@ -142,10 +156,28 @@ function gameStateChange(destinationState, stateException) {
 
             // Current game state = HOW TO PLAY
         } else if (currentGameState === GAME_STATES[9]) {
-            currentGameState = lastGameState;
-            lastGameState = null;
+            howToStateChange(destinationState);
         }
     } else if (destinationState === 'GAME OVER') {
         currentGameState = GAME_STATES[0];
+    }
+}
+
+function howToStateChange(destinationState) {
+    // Executes on howToPlayBtn click. User wants the instructions to be displayed.
+    if (destinationState === 'HOW TO PLAY') {
+        lastGameState = currentGameState;
+        currentGameState = GAME_STATES[9];
+        // Executes when the user no longer wants the instructions to be displayed.
+    } else if (destinationState === 'NEXT') {
+        currentGameState = lastGameState;
+        lastGameState = null;
+    }
+}
+
+function drawStateChange() {
+    activePlayer.deck.draw();
+    for (let i = 0; i < activePlayer.deck.drawPile.length; i++) {
+        activePlayerHandEl.children[i].src = activePlayer.deck.drawPile[i].frontImageSrc;
     }
 }

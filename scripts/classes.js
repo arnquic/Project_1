@@ -17,16 +17,16 @@ class Deck {
         // All cards in a new deck start in the draw pile. The default deck has 10 cards; 5 Attack +1 cards, and 5 Defense +1 cards.
         // NOTE: The top of the draw pile is at array index 0 (zero).
         this.drawPile = [
-            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/Card Back.png'),
-            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/Card Back.png'),
-            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/Card Back.png'),
-            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/Card Back.png'),
-            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/Card Back.png'),
-            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/Card Back.png'),
-            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/Card Back.png'),
-            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/Card Back.png'),
-            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/Card Back.png'),
-            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/Card Back.png')
+            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('attack', 1, 'assets/attackCards/Attack Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/cardBack/Card Back.png'),
+            new Card('defense', 1, 'assets/defenseCards/Defense Plus 1.png', 'assets/cardBack/Card Back.png')
         ];
 
         // The hand and discard piles start empty.
