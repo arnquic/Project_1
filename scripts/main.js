@@ -5,10 +5,10 @@ console.log("I'm linked to the HTML.");
 const GAME_STATES = [
     'DRAW',
     'SELECT A CARD FROM YOUR HAND TO PLAY',
-    'CHOOSE AN ALLIED MONSTER TO PLAY THE CARD ON',
-    'CHOOSE A MONSTER TO PERFORM AN ACTION',
-    'CHOOSE A MONSTER ACTION TO PERFORM',
-    'CHOOSE AN ENEMY MONSTER AS THE ACTION TARGET',
+    'SELECT AN ALLIED MONSTER TO PLAY THE CARD ON',
+    'SELECT AN ALLIED MONSTER TO PERFORM AN ACTION',
+    'SELECT A MONSTER ACTION TO PERFORM',
+    'SELECT AN ENEMY MONSTER AS THE ACTION TARGET',
     'OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND',
     'DISCARD',
     'GAME OVER',
@@ -64,7 +64,7 @@ function init() {
         inactivePlayer = new Player('Jake');
     }
     updateGameStateIndicators();
-    activePlayerDrawEl.addEventListener('click', changeGameState('NEXT'));
+    activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
 }
 
 function handleClick(event) {
@@ -90,25 +90,25 @@ function swapActivePlayer() {
 }
 
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
-function changeGameState(destinationState, stateException) {
+function changeGameState(event, destinationState, stateException) {
     // User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
-        howToStateChange(destinationState);
+        howTo_StateChange(destinationState);
     } else if (destinationState === 'NEXT') {
         // Current game state = DRAW
         if (currentGameState === GAME_STATES[0]) {
-            drawStateChange();
-            // Current game state = CHOOSE A HAND CARD TO PLAY
+            draw_StateChange();
+            // Current game state = SELECT A CARD FROM YOUR HAND TO PLAY
         } else if (currentGameState === GAME_STATES[1]) {
-            currentGameState = GAME_STATES[2];
-            // Current game state = CHOOSE ALLIED MONSTER TO PLAY CARD ON
+            selectHandCard_StateChange(event);
+            // Current game state = SELECT AN ALLIED MONSTER TO PLAY THE CARD ON
         } else if (currentGameState === GAME_STATES[2]) {
             if (handCardsToPlay > 0) {
                 currentGameState = GAME_STATES[1];
             } else {
                 currentGameState = GAME_STATES[3];
             }
-            // Current game state = CHOOSE A MONSTER TO PERFORM AN ACTION
+            // Current game state = SELECT AN ALLIED MONSTER TO PERFORM AN ACTION
         } else if (currentGameState === GAME_STATES[3]) {
             // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
             if (!stateException) {
@@ -117,10 +117,10 @@ function changeGameState(destinationState, stateException) {
                 currentGameState = GAME_STATES[7];
             }
 
-            // Current game state = CHOOSE A MONSTER ACTION TO PERFORM
+            // Current game state = SELECT A MONSTER ACTION TO PERFORM
         } else if (currentGameState === GAME_STATES[4]) {
             currentGameState = GAME_STATES[5];
-            // Current game state = CHOOSE AN ENEMY MONSTER AS THE ACTION TARGET
+            // Current game state = SELECT AN ENEMY MONSTER AS THE ACTION TARGET
         } else if (currentGameState === GAME_STATES[5]) {
             for (let i = 0; i < inactivePlayer.monsters.length; i++) {
                 if (inactivePlayer.monsters[i].isActive) {
@@ -156,14 +156,14 @@ function changeGameState(destinationState, stateException) {
 
             // Current game state = HOW TO PLAY
         } else if (currentGameState === GAME_STATES[9]) {
-            howToStateChange(destinationState);
+            howTo_StateChange(destinationState);
         }
     } else if (destinationState === 'GAME OVER') {
         currentGameState = GAME_STATES[0];
     }
 }
 
-function howToStateChange(destinationState) {
+function howTo_StateChange(destinationState) {
     // Executes on howToPlayBtn click. User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
         lastGameState = currentGameState;
@@ -175,9 +175,71 @@ function howToStateChange(destinationState) {
     }
 }
 
-function drawStateChange() {
+function draw_StateChange() {
+    // Deactive the event listener for this state.
+    activePlayerDrawEl.removeEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+
+    // Update the Model by calling the draw function.
     activePlayer.deck.draw();
-    for (let i = 0; i < activePlayer.deck.drawPile.length; i++) {
-        activePlayerHandEl.children[i].src = activePlayer.deck.drawPile[i].frontImageSrc;
+    for (let i = 0; i < activePlayer.deck.hand.length; i++) {
+        // Set the image to be displayed as that of the cards in the player's hand.
+        activePlayerHandEl.children[i].src = activePlayer.deck.hand[i].frontImageSrc;
+        // Set the hand elements to be completely opaque, indicating that they can be selected to play.
+        activePlayerHandEl.children[i].style.opacity = 1;
     }
+
+    // Advance the game state to the "SELECT A CARD FROM YOUR HAND TO PLAY" state.
+    currentGameState = GAME_STATES[1];
+    // Activate the event listener for the next state.
+    activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+}
+
+function selectHandCard_StateChange(event) {
+    // Deactive the event listener for this state.
+    activePlayerHandEl.removeEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+
+    // Check which of the cards in the player's hand was selected and if it can be played (is active). If that card can be played, play it. If not, wait for another card in the player's hand to be clicked.
+    for (let i = 0; i < activePlayer.deck.hand.length; i++) {
+        if (event.target === activePlayerHandEl.children[i]) {
+            if (activePlayer.deck.hand[i].isActive) {
+                // Advance the game state to the "SELECT AN ALLIED MONSTER TO PLAY THE CARD ON" state.
+                currentGameState = GAME_STATES[2];
+                // Activate the event listener for the next state.
+                activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+            } else if (!activePlayer.deck.hand[i].isActive) {
+                // Reactivate the hand event listener to wait for another hand card to be clicked.
+                activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+            }
+        }
+    }
+
+
+}
+
+function selectMonsterToPlayCardOn_StateChange(event) {
+
+}
+
+function selectMonsterToPerformAction_StateChange(event) {
+
+}
+
+function selectMonsterActionToPerform_StateChange(event) {
+
+}
+
+function selectActionTarget_StateChange(event) {
+
+}
+
+function opportunityToDefend_StateChange(event) {
+
+}
+
+function discard_StateChange(event) {
+
+}
+
+function gameOver_StateChange(event) {
+
 }
