@@ -78,7 +78,7 @@ How to technically fulfill the game (e.g., function to deal cards)
     - Variables
         + Variable to track which player's turn it is
         + Variable to track number 
-        + Variable to track the current turn state & game over state (Draw, Play Hand, Play Hand on monster, Monster to perform action, Which monster action to perform, Monster action target, Discard, and Game Over)
+        + Variable to track the current turn state & game over state (Draw, Play Hand, Play Card on monster, Monster to perform action, Which monster action to perform, Monster action target, Defend Opportunity, Discard, and Game Over)
         + Variable to track how many cards have been played during the "Play Hand" state
     - State Transition Functions (on click)
         + function to allow for transition from Draw TO Play Hand
