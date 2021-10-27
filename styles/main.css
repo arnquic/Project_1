@@ -175,6 +175,20 @@
     height: auto;
 }
 
+#gameOver {
+    grid-area: 2 / 1 / 3 / 2;
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+#gameOverInfo {
+    background-color: rgba(0, 0, 0, 0.87);
+    border: 5px solid rgb(63, 63, 63);
+    padding: 15px;
+    color: whitesmoke;
+}
+
 #instructionsArea {
     grid-area: 2 / 1 / 3 / 2;
     height: 100%;

@@ -1,6 +1,6 @@
 console.log("I'm linked to the HTML.");
 
-// -------------------------  MODEL  --------------------------------
+// #region -------------------------  MODEL  --------------------------------
 // Global Constants
 const GAME_STATES = [
     'DRAW',
@@ -28,9 +28,9 @@ let activePlayer;
 let inactivePlayer;
 // + Event listener abort controllers
 let nextStateBtnController;
+// #endregion
 
-
-// ---------------------------  VIEW  ---------------------------------
+// #region ---------------------------  VIEW  ---------------------------------
 // Cache re-usable DOM elements.
 // + Info bar elements
 let activePlayerIndicatorEl = document.getElementById('playerTurnIndicator');
@@ -51,7 +51,7 @@ let pickableCardsEl = document.getElementById('pickableCards');
 let nextStateBtn = document.getElementById('nextStateBtn');
 // + How to Play instructions
 let howToPlayInstEl = document.getElementById('instructionsArea');
-
+// #endregion
 
 // -------------------------  CONTROLLER  ------------------------------
 // Set function to run on page load
@@ -133,39 +133,32 @@ function changeGameState(event, destinationState, stateException) {
     }
 }
 
+// #region +++++++ State Change Functions ++++++
+
 function howTo_StateChange(destinationState) {
     // Executes on howToPlayBtn click. User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
-        howToPlayInstEl.style.display = 'flex';
-        howToPlayBtn.innerHTML = 'Return to Game';
         lastGameState = currentGameState;
         currentGameState = GAME_STATES[8];
         howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "NEXT") }, { once: true });
-        renderGameStateIndicators();
         // Executes when the user no longer wants the instructions to be displayed.
     } else if (destinationState === 'NEXT') {
-        howToPlayInstEl.style.display = 'none';
-        howToPlayBtn.innerHTML = 'How to Play';
         currentGameState = lastGameState;
         lastGameState = null;
         howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true });
-        renderGameStateIndicators();
     }
+    renderHowTo(destinationState);
 }
 
 function draw_StateChange() {
     // Update the Model by calling the draw function.
     activePlayer.deck.draw();
-
-    // Now that the active player's model has been updated with cards moving from their draw pile to their hand, render those changes to the view.
-    renderHand();
-
     // Advance the game state to the "SELECT A CARD FROM YOUR HAND TO PLAY" state.
     currentGameState = GAME_STATES[1];
     // Activate the event listener for the next state.
     activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
     // Render the updated game state.
-    renderGameStateIndicators();
+    renderDrawState();
 }
 
 function selectHandCard_StateChange(event) {
@@ -282,8 +275,13 @@ function selectMonsterToAttack_StateChange(event) {
                 else {
                     // Attack the selected enemy and do damage.
                     activePlayer.monsters[attackingMonsterIndex].attackEnemy(inactivePlayer.monsters[monsterToAttackIndex]);
-                    // If the active player has any monsters remaining that are capable of attacking, return to the state that allows them to select another monster to attack with.
-                    if (activePlayer.anyMonstersActive()) {
+                    // If the player that was just attacked doesn't have any remaining monsters with health above 0, then the game is over and the active player wins.
+                    if (!inactivePlayer.anyMonstersConscious) {
+                        currentGameState = GAME_STATES[7];
+                        changeGameState(null, 'NEXT');
+                    }
+                    // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
+                    else if (activePlayer.anyMonstersActive()) {
                         // This sets the game state to the "SELECT AN ALLIED MONSTER TO ATTACK WITH" game state.
                         currentGameState = GAME_STATES[3];
                         // Activate the event listener to allow the active player to select a monster that they would like to attack with.
@@ -309,37 +307,89 @@ function selectMonsterToAttack_StateChange(event) {
 }
 
 function opportunityToDefend_StateChange(event) {
-
+    // must deactivate the next state button as the inactive player has opted to use a monster to defend.
+    inactivateNextStateBtn();
 }
 
 function discard_StateChange(event) {
     //
-
+    activePlayer.deck.discard();
+    currentGameState = GAME_STATES[0];
+    swapActivePlayer();
+    renderDiscard();
+    renderHand();
+    renderGameStateIndicators();
 }
 
 function gameOver_StateChange(event) {
-
+    renderGameOver();
 }
+// #endregion
 
-// +++++ Render Functions +++++
+// #region +++++ Render Functions +++++
 function renderGameStateIndicators() {
     activePlayerIndicatorEl.innerHTML = `It's ${activePlayer.name}'s turn.`;
     turnStateIndicatorEl.innerHTML = `${currentGameState}`;
 }
 
-function renderHand() {
-    console.log('renderHand function has triggered.');
-    for (let i = 0; i < activePlayer.deck.hand.length; i++) {
-        // Set the image to be displayed as that of the cards in the player's hand.
-        console.log('the child in question is: ', activePlayerHandEl.children[i]);
-        activePlayerHandEl.children[i].src = activePlayer.deck.hand[i].frontImgSrc;
-        // Set the hand elements to be completely opaque, indicating that they can be selected to play.
-        activePlayerHandEl.children[i].style.opacity = 1;
+function renderHowTo(destinationState) {
+    // Executes on howToPlayBtn click. User wants the instructions to be displayed.
+    if (destinationState === 'HOW TO PLAY') {
+        howToPlayInstEl.style.display = 'flex';
+        howToPlayBtn.innerHTML = 'Return to Game';
+        // Executes when the user no longer wants the instructions to be displayed.
+    } else if (destinationState === 'NEXT') {
+        howToPlayInstEl.style.display = 'none';
+        howToPlayBtn.innerHTML = 'How to Play';
+    }
+    renderGameStateIndicators();
+}
+
+function renderDrawState() {
+    renderHand();
+    renderGameStateIndicators();
+}
+
+function renderAttackingMonsterState(monsterEl) {
+    monsterEl.style.backgroundColor = 'white';
+}
+
+function renderDoneWithAttackDefend(attackingMonsterEl, monsterBeingAttackedEl, defendingMonsterEl) {
+    attackingMonsterEl.style.backgroundColor = 'grey';
+    monsterBeingAttackedEl.style.backgroundColor = 'grey';
+    if (defendingMonsterEl !== undefined && defendingMonsterEl !== null) {
+        defendingMonsterEl.style.backgroundColor = 'grey';
     }
 }
 
-function renderAttackingMonster(monsterEl) {
+function renderDiscard() {
+    if (activePlayer.deck.discardPile.length > 0) {
+        activePlayerDiscardEl.children[0].src = activePlayer.deck.discardPile[activePlayer.deck.discardPile.length - 1].frontImgSrc;
+    }
+}
 
+function renderGameOverState() {
+
+}
+
+function renderHand() {
+    // Check if the player has cards in their hand. If they do, render the front images of those cards.
+    if (activePlayer.deck.hand.length > 0) {
+        for (let i = 0; i < activePlayerHandEl.length; i++) {
+            // Set the image to display.
+            activePlayerHandEl.children[i].style.display = 'flex';
+            // Set the image to be displayed as that of the cards in the player's hand.
+            activePlayerHandEl.children[i].src = activePlayer.deck.hand[i].frontImgSrc;
+            // Set the hand elements to be completely opaque, indicating that they can be selected to play.
+            activePlayerHandEl.children[i].style.opacity = 1;
+        }
+    }
+    // If the player doesn't have cards in their hand render their hand as empty.
+    else {
+        for (let i = 0; i < activePlayerHandEl.children.length; i++) {
+            activePlayerHandEl.children[i].style.display = 'none';
+        }
+    }
 }
 
 function renderNextStateBtn(btnTxt, displayStyl, btnColor) {
@@ -348,7 +398,9 @@ function renderNextStateBtn(btnTxt, displayStyl, btnColor) {
     nextStateBtn.style.color = btnColor;
 }
 
-// +++++  Additional Functions +++++
+// #endregion
+
+// #region +++++  Additional Functions +++++
 // Called at end of discard state (when turn change occurs).
 function swapActivePlayer() {
     let tempPlayer = activePlayer;
@@ -365,3 +417,5 @@ function inactivateNextStateBtn() {
     renderNextStateBtn('Inactive', 'none', 'black');
     nextStateBtnController.abort();
 }
+
+// #endregion

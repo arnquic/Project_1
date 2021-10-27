@@ -156,6 +156,16 @@ class Player {
         }
         return anyActive;
     }
+
+    checkConsciousMonsters() {
+        let anyConscious = false;
+        for (let i = 0; i < this.monsters.length; i++) {
+            if (this.monsters[i].health > 0) {
+                anyConscious = true;
+            }
+        }
+        return anyConscious;
+    }
 }
 
 
