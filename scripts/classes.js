@@ -146,6 +146,16 @@ class Player {
             new Monster('assets/monsters/monster3.png')
         ];
     }
+
+    anyMonstersActive() {
+        let anyActive = false;
+        for (let i = 0; i < this.monsters.length; i++) {
+            if (this.monsters[i].isActive === true) {
+                anyActive = true;
+            }
+        }
+        return anyActive;
+    }
 }
 
 

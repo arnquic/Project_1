@@ -138,6 +138,10 @@
     justify-content: center;
 }
 
+#nextStateBtn {
+    display: none;
+}
+
 .monsterCard {
     height: 80%;
     width: 30%;
