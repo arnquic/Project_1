@@ -163,6 +163,133 @@
                 </section>
             </section>
         </section>
+        <section id="instructionsArea">
+            <section id="instructions">
+                <h1>Game Rules:</h1>
+                <ul>
+                    <li><u>Game Start:</u></li>
+                    <ul>
+                        <li>(MVP) Each player starts with the same deck of nine (10) shuffled cards:</li>
+                        <ul>
+                            <li>5 "+1" Attack cards</li>
+                            <li>5 "+1" Defense cards</li>
+                        </ul>
+                        <li>(If "Special Actions" stretch goal is met) Each player starts with the same deck of nine (9)
+                            shuffled cards:</li>
+                        <ul>
+                            <li>3 "+1" Attack cards</li>
+                            <li>3 "+1" Defense cards</li>
+                            <li>3 "+1" Special cards</li>
+                        </ul>
+                        <li>Each player starts with the same three (3) default monsters. Those monsters have the
+                            following
+                            attributes:</li>
+                        <ul>
+                            <li>Health = 10</li>
+                            <li>Attack = 0</li>
+                            <li>Defense = 1</li>
+                            <li>(Stretch Goal) Special = 0</li>
+                        </ul>
+                    </ul>
+                    <li>
+                        <u>Draw turn state:</u> During their turn, the active player will draw 5 cards from their draw
+                        pile. If
+                        there are not enough cards in that player's draw pile, their discard pile will be shuffled and
+                        appended to their draw pile.
+                    </li>
+                    <li>
+                        <u>(Stretch Goal) Deck Supplement turn state:</u> If any cards remain in any of the 3 pickable
+                        card
+                        piles, the
+                        player may select the top card from one pile and place it in their discard pile.
+                    </li>
+                    <li>
+                        <u>Monster Supplement turn state:</u> The active player then must play 3 of the cards in their
+                        hand.
+                        Each played card
+                        is applied to one monster, increasing the indicated stat (attack, defense, *(Stretch Goal)* or
+                        special) of that monster by the amount indicated on the card.
+                    </li>
+                    <li>
+                        <u>Monster Action turn state:</u> The active player may choose to attack, use a special, or do
+                        nothing
+                        with
+                        each of their active monsters. Those actions behave in the following ways:
+                        <ul>
+                            <li>
+                                <u>Attack:</u> Choose an enemy monster to attack. If that enemy monster is in an
+                                inactive state
+                                (meaning that they performed an action on their last turn), their defense does nothing.
+                                The
+                                inactive player may choose to use one of their active monsters to defend the monster
+                                that is
+                                under attack. Upon defending, the inactive player's monster becomes inactive and cannot
+                                defend again.
+                            </li>
+                            <li>
+                                <u>Defense:</u> This action does not take place on the active player's turn. If you do
+                                nothing
+                                with
+                                a monster, they are then available to defend an attack on the other player's turn. (see
+                                "Attack" for more information).
+                            </li>
+                            <li>
+                                <u>(Stretch Goal) Special:</u> The following actions are available when choosing to use
+                                a
+                                special:
+                                <ul>
+                                    <li>
+                                        (Stretch Goal)* Increase allied monster's Attack stat by "My Special Stat x
+                                        0.5".
+                                        This increase is
+                                        good for one
+                                        attack on the turn that the stat was increased.
+                                    </li>
+                                    <li>
+                                        (Stretch Goal) Increase allied monster's Defense stat by "My Special Stat x
+                                        0.5".
+                                        This increase is
+                                        good for one
+                                        defense on the turn (in this case the turn extends to the other player's turn)
+                                        that
+                                        the
+                                        stat was
+                                        increased.
+                                    </li>
+                                    <li>
+                                        (Stretch Goal) Add poison to an allied monster's attack. The poison is applied
+                                        to
+                                        the enemy monster
+                                        upon attack and
+                                        lasts for 3 turns.
+                                    </li>
+                                    <li>
+                                        (Stretch Goal) Remove allied monster's poison effect.
+                                    </li>
+                                    <li>
+                                        (Stretch Goal) Attack 2 targets. The targets must be different (note that this
+                                        is a
+                                        meaningless
+                                        action if the enemy
+                                        has only one remaining active monster).
+                                    </li>
+
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <u>Discard turn state:</u> All of cards within the active player's hand (whether played during
+                        the
+                        "Monster Action
+                        turn state" or not) are placed into that player's discard pile.
+                    </li>
+                    <li>
+                        <u>End of turn.</u> This ends the active player's turn and the next player begins their turn.
+                    </li>
+                </ul>
+            </section>
+        </section>
     </section>
 </body>
 
