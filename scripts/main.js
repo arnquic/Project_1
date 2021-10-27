@@ -44,6 +44,8 @@ let activePlayerHandEl = document.getElementById('activePlayerHand');
 // + Right sidebar elements
 let pickableCardsEl = document.getElementById('pickableCards');
 let nextStateBtn = document.getElementById('nextStateBtn');
+// + How to Play instructions
+let howToPlayInstEl = document.getElementById('instructionsArea');
 
 
 // -------------------------  CONTROLLER  ------------------------------
@@ -67,6 +69,7 @@ function init() {
     }
     updateGameStateIndicators();
     activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') });
+    howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") });
 }
 
 function updateGameStateIndicators() {
@@ -154,12 +157,20 @@ function swapActivePlayer() {
 function howTo_StateChange(destinationState) {
     // Executes on howToPlayBtn click. User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
+        howToPlayBtn.removeEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") });
+        howToPlayInstEl.style.display = 'flex';
+        howToPlayBtn.innerHTML = 'Return to Game';
         lastGameState = currentGameState;
         currentGameState = GAME_STATES[9];
+        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "NEXT") });
         // Executes when the user no longer wants the instructions to be displayed.
     } else if (destinationState === 'NEXT') {
+        howToPlayBtn.removeEventListener('click', function (event) { changeGameState(event, "NEXT") });
+        howToPlayInstEl.style.display = 'none';
+        howToPlayBtn.innerHTML = 'How to Play';
         currentGameState = lastGameState;
         lastGameState = null;
+        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") });
     }
 }
 
