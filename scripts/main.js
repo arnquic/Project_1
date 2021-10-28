@@ -28,6 +28,7 @@ let activePlayer;
 let inactivePlayer;
 // + Event listener abort controllers
 let nextStateBtnController;
+let howToBtnController;
 // #endregion
 
 // #region ---------------------------  VIEW  ---------------------------------
@@ -36,6 +37,7 @@ let nextStateBtnController;
 let activePlayerIndicatorEl = document.getElementById('playerTurnIndicator');
 let turnStateIndicatorEl = document.getElementById('turnStateIndicator');
 let howToPlayBtn = document.getElementById('howToPlayBtn');
+let howToPlayInstEl = document.getElementById('instructionsArea');
 let resetBtn = document.getElementById('resetBtn');
 // + Inactive player elements
 let inactivePlayerDrawEl = document.getElementById('inactivePlayerDraw');
@@ -49,8 +51,9 @@ let activePlayerHandEl = document.getElementById('activePlayerHand');
 // + Right sidebar elements
 let pickableCardsEl = document.getElementById('pickableCards');
 let nextStateBtn = document.getElementById('nextStateBtn');
-// + How to Play instructions
-let howToPlayInstEl = document.getElementById('instructionsArea');
+// + Game Over element
+let gameOverEl = document.getElementById('gameOverArea');
+
 // #endregion
 
 // -------------------------  CONTROLLER  ------------------------------
@@ -67,6 +70,7 @@ function init() {
     monsterToAttackIndex = null;
     selectedDefendingMonster = null;
     nextStateBtnController = new AbortController();
+    howToBtnController = new AbortController();
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
@@ -76,10 +80,16 @@ function init() {
         activePlayer = new Player('Anna');
         inactivePlayer = new Player('Jake');
     }
-    renderGameStateIndicators();
+    renderInit();
     activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }), { once: true };
-    howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true });
+    howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
+    resetBtn.addEventListener('click', reset);
     console.log('init function has run.');
+}
+
+function reset() {
+    howToBtnController.abort();
+    init();
 }
 
 
@@ -140,12 +150,12 @@ function howTo_StateChange(destinationState) {
     if (destinationState === 'HOW TO PLAY') {
         lastGameState = currentGameState;
         currentGameState = GAME_STATES[8];
-        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "NEXT") }, { once: true });
+        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "NEXT") }, { once: true, signal: howToBtnController.signal });
         // Executes when the user no longer wants the instructions to be displayed.
     } else if (destinationState === 'NEXT') {
         currentGameState = lastGameState;
         lastGameState = null;
-        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true });
+        howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
     }
     renderHowTo(destinationState);
 }
@@ -327,6 +337,13 @@ function gameOver_StateChange(event) {
 // #endregion
 
 // #region +++++ Render Functions +++++
+function renderInit() {
+    gameOverEl.style.display = 'none';
+    howToPlayInstEl.style.display = 'none';
+    howToPlayBtn.innerHTML = 'How to Play';
+    renderGameStateIndicators();
+}
+
 function renderGameStateIndicators() {
     activePlayerIndicatorEl.innerHTML = `It's ${activePlayer.name}'s turn.`;
     turnStateIndicatorEl.innerHTML = `${currentGameState}`;
@@ -369,7 +386,8 @@ function renderDiscard() {
 }
 
 function renderGameOverState() {
-
+    gameOverEl.children[0].children[0].innerHTML = `${activePlayer.name} Wins!`
+    gameOverEl.style.display = 'flex';
 }
 
 function renderHand() {
