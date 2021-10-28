@@ -19,10 +19,10 @@ const GAME_STATES = [
 let currentGameState;
 let lastGameState;
 let handCardsToPlay;
-let selectedCard;
+let selectedCardIndex;
 let attackingMonsterIndex;
 let monsterToAttackIndex;
-let selectedDefendingMonster;
+let defendingMonsterIndex;
 // + Players
 let activePlayer;
 let inactivePlayer;
@@ -65,10 +65,10 @@ function init() {
     currentGameState = GAME_STATES[0];
     lastGameState = null;
     handCardsToPlay = 3;
-    selectedCard = null;
+    selectedCardIndex = null;
     attackingMonsterIndex = null;
     monsterToAttackIndex = null;
-    selectedDefendingMonster = null;
+    defendingMonsterIndex = null;
     nextStateBtnController = new AbortController();
     howToBtnController = new AbortController();
 
@@ -179,7 +179,7 @@ function selectHandCard_StateChange(event) {
         if (event.target === activePlayerHandEl.children[i]) {
             if (activePlayer.deck.hand[i].isActive) {
                 // Set the selected card as the, well... selected card.
-                selectedCard = activePlayer.deck.hand[i];
+                selectedCardIndex = i;
                 // Make the card inactive so that it cannot be played again. Also make that inactive status visible by changing the selected card's opacity.
                 activePlayer.deck.hand[i].isActive = false;
                 event.target.style.opacity = 0.6;
@@ -199,6 +199,7 @@ function selectHandCard_StateChange(event) {
 }
 
 function selectMonsterToPlayCardOn_StateChange(event) {
+    console.log("the event target id of the monster to play card on state change is: ", event.target.id);
     // Check which monster was selected.
     for (let i = 0; i < activePlayer.monsters.length; i++) {
         if (event.target === activePlayerMonstersEl.children[i]) {
@@ -209,15 +210,13 @@ function selectMonsterToPlayCardOn_StateChange(event) {
             }
             // If the selected monster's health is above 0 (zero), then play the card on that monster.
             else if (activePlayer.monsters[i].health > 0) {
-                if (selectedCard.type === 'attack') {
-                    activePlayer.monsters[i].increaseAttack(selectedCard.amount);
-                    // The card has been played; set the selected card to null.
-                } else if (selectedCard.type === 'defense') {
-                    activePlayer.monsters[i].increaseDefense(selectedCard.amount);
-                    // The card has been played; set the selected card to null.
-                    selectedCard = null;
+                if (activePlayer.deck.hand[selectedCardIndex].type === 'attack') {
+                    activePlayer.monsters[i].increaseAttack(activePlayer.deck.hand[selectedCardIndex].amount);
+                } else if (activePlayer.deck.hand[selectedCardIndex].type === 'defense') {
+                    activePlayer.monsters[i].increaseDefense(activePlayer.deck.hand[selectedCardIndex].amount);
                 }
-                selectedCard = null;
+                // The card has been played; set the selected card to null.
+                selectedCardIndex = null;
                 // Activate the event listener for the next game state.
                 if (handCardsToPlay > 0) {
                     currentGameState = GAME_STATES[1];
@@ -317,8 +316,39 @@ function selectMonsterToAttack_StateChange(event) {
 }
 
 function opportunityToDefend_StateChange(event) {
+    console.log('the inactive player clicked the following as their defending monster: ', event.target);
     // must deactivate the next state button as the inactive player has opted to use a monster to defend.
     inactivateNextStateBtn();
+    for (let i = 0; i < inactivePlayer.monsters.length; i++) {
+        if (event.target === inactivePlayerMonstersEl.children[i]) {
+            if (inactivePlayer.monsters[i].isActive) {
+                // Attack the selected enemy and do damage.
+                activePlayer.monsters[attackingMonsterIndex].attackEnemy(inactivePlayer.monsters[monsterToAttackIndex], inactivePlayer.monsters[i]);
+                // Render the monster model updates to the view.
+                renderDoneWithAttackDefend(activePlayerMonstersEl.children[attackingMonsterIndex], inactivePlayerMonstersEl.children[monsterToAttackIndex], inactivePlayerMonstersEl.children[i]);
+                // If the player that was just attacked doesn't have any remaining monsters with health above 0, then the game is over and the active player wins.
+                if (!inactivePlayer.anyMonstersConscious) {
+                    currentGameState = GAME_STATES[7];
+                    changeGameState(null, 'NEXT');
+                }
+                // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
+                else if (activePlayer.anyMonstersActive()) {
+                    // This sets the game state to the "SELECT AN ALLIED MONSTER TO ATTACK WITH" game state.
+                    currentGameState = GAME_STATES[3];
+                    // Activate the event listener to allow the active player to select a monster that they would like to attack with.
+                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                    // Activate the next state button so that the active player may choose to stop attacking before all of their monsters have attacked.
+                    activateNextStateBtn("Done Attacking");
+                }
+                // If the active player doesn't have any monsters that are still capable of attacking, go to the "DISCARD" game state.
+                else {
+                    currentGameState = GAME_STATES[6];
+                    // Activate the next state button so that the active player can click something to discard their cards.
+                    activateNextStateBtn("Discard your hand");
+                }
+            }
+        }
+    }
 }
 
 function discard_StateChange(event) {
@@ -393,9 +423,10 @@ function renderGameOverState() {
 function renderHand() {
     // Check if the player has cards in their hand. If they do, render the front images of those cards.
     if (activePlayer.deck.hand.length > 0) {
-        for (let i = 0; i < activePlayerHandEl.length; i++) {
-            // Set the image to display.
-            activePlayerHandEl.children[i].style.display = 'flex';
+        // Set the hand to display.
+        activePlayerHandEl.style.display = 'flex';
+        for (let i = 0; i < activePlayerHandEl.children.length; i++) {
+            console.log("the lenght of the active player's hand elements is: ", activePlayerHandEl.length);
             // Set the image to be displayed as that of the cards in the player's hand.
             activePlayerHandEl.children[i].src = activePlayer.deck.hand[i].frontImgSrc;
             // Set the hand elements to be completely opaque, indicating that they can be selected to play.

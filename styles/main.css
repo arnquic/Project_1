@@ -99,7 +99,7 @@
 #activePlayerHand {
     border: 2px solid hotpink;
     grid-area: 2 / 2 / 3 / 3;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
 }
