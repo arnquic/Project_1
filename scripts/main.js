@@ -29,6 +29,7 @@ let inactivePlayer;
 // + Event listener abort controllers
 let nextStateBtnController;
 let howToBtnController;
+let currentNonUniqueStateController;
 // #endregion
 
 // #region ---------------------------  VIEW  ---------------------------------
@@ -71,6 +72,7 @@ function init() {
     defendingMonsterIndex = null;
     nextStateBtnController = new AbortController();
     howToBtnController = new AbortController();
+    currentNonUniqueStateController = new AbortController();
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
@@ -81,13 +83,14 @@ function init() {
         inactivePlayer = new Player('Jake');
     }
     renderInit();
-    activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }), { once: true };
+    activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }), { once: true, signal: currentNonUniqueStateController.signal };
     howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
     resetBtn.addEventListener('click', reset);
     console.log('init function has run.');
 }
 
 function reset() {
+    currentNonUniqueStateController.abort();
     howToBtnController.abort();
     init();
 }
@@ -95,6 +98,7 @@ function reset() {
 
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
 function changeGameState(event, destinationState, stateException) {
+    console.log('change game state has run');
     // User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
         howTo_StateChange(destinationState);
@@ -127,7 +131,12 @@ function changeGameState(event, destinationState, stateException) {
         }
         // Current game state = OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND
         else if (currentGameState === GAME_STATES[5]) {
-            opportunityToDefend_StateChange(event);
+            // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
+            if (!stateException) {
+                opportunityToDefend_StateChange(event);
+            } else if (stateException) {
+                skippedDefending_StateChange();
+            }
         }
         // Current game state = DISCARD
         else if (currentGameState === GAME_STATES[6]) {
@@ -166,7 +175,8 @@ function draw_StateChange() {
     // Advance the game state to the "SELECT A CARD FROM YOUR HAND TO PLAY" state.
     currentGameState = GAME_STATES[1];
     // Activate the event listener for the next state.
-    activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+    activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
+    console.log('draw state change has run past adding a event listener');
     // Render the updated game state.
     renderDrawState();
 }
@@ -188,11 +198,11 @@ function selectHandCard_StateChange(event) {
                 // Advance the game state to the "SELECT AN ALLIED MONSTER TO PLAY THE CARD ON" state.
                 currentGameState = GAME_STATES[2];
                 // Activate the event listener for the next state.
-                activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                 renderGameStateIndicators();
             } else if (!activePlayer.deck.hand[i].isActive) {
                 // Reactivate the hand event listener to wait for another hand card to be clicked.
-                activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
             }
         }
     }
@@ -211,7 +221,7 @@ function selectMonsterToPlayCardOn_StateChange(event) {
                 // If the selected monster's health is below 0 (zero), then don't allow the card to be played on that monster and wait for another monster to be selected.
                 if (activePlayer.monsters[i].health === 0) {
                     // Reactivate the monster event listener to wait for another monster to be clicked.
-                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                 }
                 // If the selected monster's health is above 0 (zero), then play the card on that monster.
                 else if (activePlayer.monsters[i].health > 0) {
@@ -226,11 +236,11 @@ function selectMonsterToPlayCardOn_StateChange(event) {
                     // Activate the event listener for the next game state.
                     if (handCardsToPlay > 0) {
                         currentGameState = GAME_STATES[1];
-                        activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                        activePlayerHandEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                     }
                     else if (handCardsToPlay <= 0) {
                         currentGameState = GAME_STATES[3];
-                        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                         // Activate the next state button so that the active player may choose to stop attacking before all of their monsters have attacked.
                         activateNextStateBtn("Done Attacking");
                     }
@@ -240,7 +250,7 @@ function selectMonsterToPlayCardOn_StateChange(event) {
     }
     // If the findMonsterEl function does return 'too high', reactivate the monster event listener to wait for an individual monster element to be clicked.
     else {
-        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
     }
     renderGameStateIndicators();
 }
@@ -267,20 +277,20 @@ function selectMonsterToAttackWith_StateChange(event) {
                     // Abort the nextStateBtn's event listener, as the player has chosen to attack.
                     inactivateNextStateBtn();
                     // Activate the event listener for the next state.
-                    inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                    inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
 
                 }
                 // If the selected monster is not active, or has been subdued, reactivate the monster selection event listener and wait for another monster to be selected.
                 else {
                     // Reactivate the monster selection event listener
-                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                    activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                 }
             }
         }
     }
     // If the findMonsterEl function does return 'too high', reactivate the monster event listener to wait for an individual monster element to be clicked.
     else {
-        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
     }
     renderGameStateIndicators();
 }
@@ -305,7 +315,7 @@ function selectMonsterToAttack_StateChange(event) {
                         // Advance the game state to the "OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND" state.
                         currentGameState = GAME_STATES[5];
                         // Activate the event listener for the inactivePlayer to choose a monster to defend with.
-                        inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true })
+                        inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal })
                         // Activate the event listener for the opposing player to choose not to defend.
                         activateNextStateBtn("Skip defending");
                     }
@@ -313,8 +323,11 @@ function selectMonsterToAttack_StateChange(event) {
                     else {
                         // Attack the selected enemy and do damage.
                         activePlayer.monsters[attackingMonsterIndex].attackEnemy(inactivePlayer.monsters[monsterToAttackIndex]);
+                        // Render the monster model updates to the view.
+                        renderDoneWithAttackDefend();
+                        renderMonsterUpdates();
                         // If the player that was just attacked doesn't have any remaining monsters with health above 0, then the game is over and the active player wins.
-                        if (!inactivePlayer.anyMonstersConscious) {
+                        if (!inactivePlayer.anyConsciousMonsters()) {
                             console.log('The inactive player has no conscious monsters after attacking.');
                             currentGameState = GAME_STATES[7];
                             changeGameState(null, 'NEXT');
@@ -324,7 +337,7 @@ function selectMonsterToAttack_StateChange(event) {
                             // This sets the game state to the "SELECT AN ALLIED MONSTER TO ATTACK WITH" game state.
                             currentGameState = GAME_STATES[3];
                             // Activate the event listener to allow the active player to select a monster that they would like to attack with.
-                            activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                            activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                             // Activate the next state button so that the active player may choose to stop attacking before all of their monsters have attacked.
                             activateNextStateBtn("Done Attacking");
                         }
@@ -339,14 +352,14 @@ function selectMonsterToAttack_StateChange(event) {
                 // If the selected monster has been subdued, reactivate the monster selection event listener and wait for another monster to be selected.
                 else {
                     // Reactivate the monster selection event listener
-                    inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                    inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                 }
             }
         }
     }
     // If the findMonsterEl function does return 'too high', reactivate the monster event listener to wait for an individual monster element to be clicked.
     else {
-        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
     }
     renderGameStateIndicators();
 }
@@ -364,16 +377,16 @@ function opportunityToDefend_StateChange(event) {
             if (individualMonsterEl === inactivePlayerMonstersEl.children[i]) {
                 if (inactivePlayer.monsters[i].isActive) {
                     defendingMonsterIndex = i;
+                    console.log("the defending monster is: ", inactivePlayerMonstersEl.children[defendingMonsterIndex]);
                     // Render the defending monster as selected.
                     renderDefendingMonster();
-                    // Pause execution to give the player timeto register that their defending monster has been selected.
-                    sleep(1500);
                     // Attack the selected enemy and do damage.
                     activePlayer.monsters[attackingMonsterIndex].attackEnemy(inactivePlayer.monsters[monsterToAttackIndex], inactivePlayer.monsters[defendingMonsterIndex]);
                     // Render the monster model updates to the view.
                     renderDoneWithAttackDefend();
+                    renderMonsterUpdates();
                     // If the player that was just attacked doesn't have any remaining monsters with health above 0, then the game is over and the active player wins.
-                    if (!inactivePlayer.anyMonstersConscious) {
+                    if (!inactivePlayer.anyConsciousMonsters()) {
                         console.log('The inactive player has no conscious monsters after defending.');
                         currentGameState = GAME_STATES[7];
                         changeGameState(null, 'NEXT');
@@ -383,7 +396,7 @@ function opportunityToDefend_StateChange(event) {
                         // This sets the game state to the "SELECT AN ALLIED MONSTER TO ATTACK WITH" game state.
                         currentGameState = GAME_STATES[3];
                         // Activate the event listener to allow the active player to select a monster that they would like to attack with.
-                        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+                        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
                         // Activate the next state button so that the active player may choose to stop attacking before all of their monsters have attacked.
                         activateNextStateBtn("Done Attacking");
                     }
@@ -399,9 +412,39 @@ function opportunityToDefend_StateChange(event) {
     }
     // If the findMonsterEl function does return 'too high', reactivate the monster event listener to wait for an individual monster element to be clicked.
     else {
-        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true });
+        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
         // Activate the event listener for the opposing player to choose not to defend.
         activateNextStateBtn("Skip defending");
+    }
+    renderGameStateIndicators();
+}
+function skippedDefending_StateChange() {
+    console.log('skipped defending has run.');
+    // Attack the selected enemy and do damage.
+    activePlayer.monsters[attackingMonsterIndex].attackEnemy(inactivePlayer.monsters[monsterToAttackIndex]);
+    // Render the monster model updates to the view.
+    renderDoneWithAttackDefend();
+    renderMonsterUpdates();
+    // If the player that was just attacked doesn't have any remaining monsters with health above 0, then the game is over and the active player wins.
+    if (!inactivePlayer.anyConsciousMonsters()) {
+        console.log('The inactive player has no conscious monsters after attacking.');
+        currentGameState = GAME_STATES[7];
+        changeGameState(null, 'NEXT');
+    }
+    // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
+    else if (activePlayer.anyMonstersActive()) {
+        // This sets the game state to the "SELECT AN ALLIED MONSTER TO ATTACK WITH" game state.
+        currentGameState = GAME_STATES[3];
+        // Activate the event listener to allow the active player to select a monster that they would like to attack with.
+        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
+        // Activate the next state button so that the active player may choose to stop attacking before all of their monsters have attacked.
+        activateNextStateBtn("Done Attacking");
+    }
+    // If the active player doesn't have any monsters that are still capable of attacking, go to the "DISCARD" game state.
+    else {
+        currentGameState = GAME_STATES[6];
+        // Activate the next state button so that the active player can click something to discard their cards.
+        activateNextStateBtn("Discard your hand");
     }
     renderGameStateIndicators();
 }
@@ -427,6 +470,10 @@ function renderInit() {
     gameOverEl.style.display = 'none';
     howToPlayInstEl.style.display = 'none';
     howToPlayBtn.innerHTML = 'How to Play';
+    renderHand();
+    renderDiscard();
+    renderDoneWithAttackDefend();
+    renderMonsterUpdates();
     renderGameStateIndicators();
 }
 
@@ -465,6 +512,13 @@ function renderMonsterUpdates() {
         activePlayerMonstersEl.children[i].children[3].children[0].innerHTML = activePlayer.monsters[i].attack;
         // Update Defense
         activePlayerMonstersEl.children[i].children[4].children[0].innerHTML = activePlayer.monsters[i].defense;
+        // Update active status
+        if (activePlayer.monsters[i].isActive) {
+            activePlayerMonstersEl.children[i].style.opacity = 1;
+        }
+        else {
+            activePlayerMonstersEl.children[i].style.opacity = 0.6;
+        }
         // ---- Inactive Player ----
         //Update Name
         inactivePlayerMonstersEl.children[i].children[0].innerHTML = `${inactivePlayer.monsters[i].name}`;
@@ -474,6 +528,13 @@ function renderMonsterUpdates() {
         inactivePlayerMonstersEl.children[i].children[3].children[0].innerHTML = inactivePlayer.monsters[i].attack;
         // Update Defense
         inactivePlayerMonstersEl.children[i].children[4].children[0].innerHTML = inactivePlayer.monsters[i].defense;
+        // Update active status
+        if (inactivePlayer.monsters[i].isActive) {
+            inactivePlayerMonstersEl.children[i].style.opacity = 1;
+        }
+        else {
+            inactivePlayerMonstersEl.children[i].style.opacity = 0.6;
+        }
     }
 }
 
@@ -487,13 +548,20 @@ function renderMonsterToAttack() {
 
 function renderDefendingMonster() {
     inactivePlayerMonstersEl.children[defendingMonsterIndex].style.backgroundColor = 'white';
+    console.log('render defending monster has run. The defending monster element is: ', inactivePlayerMonstersEl.children[defendingMonsterIndex]);
 }
 
 function renderDoneWithAttackDefend() {
-    activePlayerMonstersEl.children[attackingMonsterIndex].style.backgroundColor = 'grey';
-    inactivePlayerMonstersEl.children[monsterToAttackIndex].style.backgroundColor = 'grey';
-    if (inactivePlayerMonstersEl.children[defendingMonsterIndex] !== undefined && inactivePlayerMonstersEl.children[defendingMonsterIndex] !== null) {
-        inactivePlayerMonstersEl.children[defendingMonsterIndex].style.backgroundColor = 'grey';
+    if (attackingMonsterIndex !== null) {
+        activePlayerMonstersEl.children[attackingMonsterIndex].style.backgroundColor = 'grey';
+    }
+    if (monsterToAttackIndex !== null) {
+        inactivePlayerMonstersEl.children[monsterToAttackIndex].style.backgroundColor = 'grey';
+    }
+    if (defendingMonsterIndex !== null) {
+        if (inactivePlayerMonstersEl.children[defendingMonsterIndex] !== undefined && inactivePlayerMonstersEl.children[defendingMonsterIndex] !== null) {
+            inactivePlayerMonstersEl.children[defendingMonsterIndex].style.backgroundColor = 'grey';
+        }
     }
     attackingMonsterIndex = null;
     monsterToAttackIndex = null;
@@ -502,9 +570,10 @@ function renderDoneWithAttackDefend() {
 
 function renderDiscard() {
     if (activePlayer.deck.discardPile.length > 0) {
+        activePlayerDiscardEl.style.display = 'flex';
         activePlayerDiscardEl.children[0].src = activePlayer.deck.discardPile[activePlayer.deck.discardPile.length - 1].frontImgSrc;
     } else {
-        activePlayerDiscardEl.children[0].src = null;
+        activePlayerDiscardEl.style.display = 'none';
     }
 }
 
@@ -547,16 +616,21 @@ function swapActivePlayer() {
     let tempPlayer = activePlayer;
     activePlayer = inactivePlayer;
     inactivePlayer = tempPlayer;
+    activePlayer.makeMonstersActive();
     handCardsToPlay = 3;
     renderMonsterUpdates();
+    currentNonUniqueStateController.abort();
 }
 
 function activateNextStateBtn(btnTxt) {
-    renderNextStateBtn(btnTxt, 'initial', 'white');
+    renderNextStateBtn(btnTxt, 'initial', 'grey');
     nextStateBtn.addEventListener('click', function (event) { changeGameState(event, 'NEXT', true) }, { once: true, signal: nextStateBtnController.signal });
+    console.log('ran activate next state button through adding of event listener');
+    console.log('next state button element: ', nextStateBtn);
 }
 
 function inactivateNextStateBtn() {
+    console.log('inactivateNextStateBtn has run');
     renderNextStateBtn('Inactive', 'none', 'black');
     nextStateBtnController.abort();
 }
@@ -593,14 +667,6 @@ function findMonsterEl(subMonsterEl) {
     else {
         console.log("The clicked monsterEl does not have a nodeName that is handled in findMonsterEl. The clicked monsterEl node name is: ", subMonsterEl.nodeName);
     }
-}
-
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
 }
 
 // #endregion

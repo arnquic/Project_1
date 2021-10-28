@@ -119,6 +119,7 @@ class Monster {
         // Stops the defending monster from taking negative damage (a.k.a, gaining health from being attacked).
         let damageToTake = Math.max(amountDmg - this.defense, 0);
         this.takeDamage(damageToTake);
+        this.isActive = false;
     }
 
     // Called to attack and do damage to an enemy monster. Takes in the targeted enemy monster and a defending enemy monster, if any.
@@ -158,7 +159,7 @@ class Player {
         return anyActive;
     }
 
-    checkConsciousMonsters() {
+    anyConsciousMonsters() {
         let anyConscious = false;
         for (let i = 0; i < this.monsters.length; i++) {
             if (this.monsters[i].health > 0) {
@@ -167,8 +168,13 @@ class Player {
         }
         return anyConscious;
     }
-}
 
+    makeMonstersActive() {
+        for (let i = 0; i < this.monsters.length; i++) {
+            this.monsters[i].isActive = true;
+        }
+    }
+}
 
 
 // Variable used for testing. - To be removed.

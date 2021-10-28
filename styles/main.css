@@ -183,6 +183,7 @@
     display: none;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 #gameOverInfo {
@@ -196,6 +197,7 @@
     height: 100%;
     width: 100%;
     display: none;
+    z-index: 2;
 }
 
 #instructions {
