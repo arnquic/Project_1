@@ -86,6 +86,8 @@ function init() {
     activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }), { once: true, signal: currentNonUniqueStateController.signal };
     howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
     resetBtn.addEventListener('click', reset);
+    nextStateBtn.addEventListener('click', function () { console.log("here's some testy stuff.") }, { signal: howToBtnController.signal });
+    nextStateBtn.style.display = 'initial';
     console.log('init function has run.');
 }
 
@@ -99,6 +101,7 @@ function reset() {
 // Game State change function. Restricts the changing of states to only those that make sense based on the current game state.
 function changeGameState(event, destinationState, stateException) {
     console.log('change game state has run');
+    console.log('the destination state is: ', destinationState, 'and the state exception: ', stateException);
     // User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
         howTo_StateChange(destinationState);
@@ -118,7 +121,7 @@ function changeGameState(event, destinationState, stateException) {
         }
         // Current game state = SELECT AN ALLIED MONSTER TO ATTACK WITH
         else if (currentGameState === GAME_STATES[3]) {
-            // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
+            // A state exception is passed in as true when the active player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
             if (!stateException) {
                 selectMonsterToAttackWith_StateChange(event);
             } else if (stateException) {
@@ -131,7 +134,7 @@ function changeGameState(event, destinationState, stateException) {
         }
         // Current game state = OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND
         else if (currentGameState === GAME_STATES[5]) {
-            // A state exception is passed in as true when a player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
+            // A state exception is passed in as true when the inactive player still has monsters that are active, but clicks the button to end the phase without using all of their availabe actions.
             if (!stateException) {
                 opportunityToDefend_StateChange(event);
             } else if (stateException) {
@@ -315,7 +318,7 @@ function selectMonsterToAttack_StateChange(event) {
                         // Advance the game state to the "OPPORTUNITY FOR OPPOSING PLAYER TO DEFEND" state.
                         currentGameState = GAME_STATES[5];
                         // Activate the event listener for the inactivePlayer to choose a monster to defend with.
-                        inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal })
+                        inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT', false) }, { once: true, signal: currentNonUniqueStateController.signal });
                         // Activate the event listener for the opposing player to choose not to defend.
                         activateNextStateBtn("Skip defending");
                     }
@@ -478,8 +481,8 @@ function renderInit() {
 }
 
 function renderGameStateIndicators() {
-    activePlayerIndicatorEl.innerHTML = `It's ${activePlayer.name}'s turn.`;
-    turnStateIndicatorEl.innerHTML = `${currentGameState}`;
+    activePlayerIndicatorEl.innerHTML = `${activePlayer.name}'s turn:  `.toUpperCase();
+    turnStateIndicatorEl.innerHTML = `${currentGameState}`.bold();
 }
 
 function renderHowTo(destinationState) {
@@ -620,6 +623,7 @@ function swapActivePlayer() {
     handCardsToPlay = 3;
     renderMonsterUpdates();
     currentNonUniqueStateController.abort();
+    currentNonUniqueStateController = new AbortController();
 }
 
 function activateNextStateBtn(btnTxt) {
@@ -633,6 +637,8 @@ function inactivateNextStateBtn() {
     console.log('inactivateNextStateBtn has run');
     renderNextStateBtn('Inactive', 'none', 'black');
     nextStateBtnController.abort();
+    nextStateBtnController = new AbortController();
+
 }
 
 function findMonsterEl(subMonsterEl) {

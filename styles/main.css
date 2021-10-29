@@ -13,15 +13,20 @@
     grid-area: 1 / 1 / 2 / 2;
     display: grid;
     grid-template: 100% / 50% 25% 25%;
+    color: whitesmoke;
 }
 
 #gameStateIndicator {
     border: 2px solid black;
     grid-area: 1 / 1 / 2 / 2;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+#turnStateIndicator {
+    color: rgb(230, 233, 43);
 }
 
 #howToPlayInfo {
