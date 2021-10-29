@@ -50,21 +50,19 @@
 }
 
 #inactivePlayer {
-    border: 4px dotted red;
+    border: 2px solid black;
     grid-area: 1 / 1 / 1 / 2;
     display: grid;
     grid-template: 1fr / 1fr 3fr 1fr;
 }
 
 #inactivePlayerDraw {
-    border: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #inactivePlayerMonsters {
-    border: 2px solid black;
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-evenly;
@@ -78,14 +76,13 @@
 }
 
 #activePlayer {
-    border: 4px dotted blue;
+    border: 2px solid black;
     grid-area: 2 / 1 / 4 / 2;
     display: grid;
     grid-template: 50% 50% / 20% 60% 20%;
 }
 
 #activePlayerDiscard {
-    border: 2px solid green;
     grid-area: 1 / 1 / 3 / 2;
     display: flex;
     justify-content: center;
@@ -93,7 +90,6 @@
 }
 
 #activePlayerMonsters {
-    border: 2px solid royalblue;
     grid-area: 1 / 2 / 2 / 3;
     display: flex;
     justify-content: space-evenly;
@@ -101,7 +97,6 @@
 }
 
 #activePlayerHand {
-    border: 2px solid hotpink;
     grid-area: 2 / 2 / 3 / 3;
     display: none;
     justify-content: center;
@@ -109,7 +104,6 @@
 }
 
 #activePlayerDraw {
-    border: 2px solid greenyellow;
     grid-area: 1 / 3 / 3 / 4;
     display: flex;
     justify-content: center;
@@ -117,14 +111,13 @@
 }
 
 #rightSideBar {
-    border: 4px dotted green;
     grid-area: 1 / 2 / 4 / 3;
     display: grid;
     grid-template: 75% 25% / 100%;
 }
 
 #pickableCards {
-    border: 2px solid gold;
+    border: 2px solid black;
     grid-area: 1 / 1 / 2 / 1;
     display: flex;
     flex-direction: column;
