@@ -112,6 +112,9 @@ class Monster {
     // Called when an enemy attacks this monster.
     takeDamage(amountDmg) {
         this.health = Math.max(this.health - amountDmg, 0);
+        if (this.health === 0) {
+            this.isActive = false;
+        }
     }
 
     // Called if a monster is chosen to defend an attack.
