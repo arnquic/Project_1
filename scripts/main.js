@@ -333,7 +333,7 @@ function selectMonsterToAttack_StateChange(event) {
                         if (!inactivePlayer.anyConsciousMonsters()) {
                             console.log('The inactive player has no conscious monsters after attacking.');
                             currentGameState = GAME_STATES[7];
-                            changeGameState(null, 'NEXT');
+                            changeGameState(null, 'GAME OVER');
                         }
                         // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
                         else if (activePlayer.anyMonstersActive()) {
@@ -392,7 +392,7 @@ function opportunityToDefend_StateChange(event) {
                     if (!inactivePlayer.anyConsciousMonsters()) {
                         console.log('The inactive player has no conscious monsters after defending.');
                         currentGameState = GAME_STATES[7];
-                        changeGameState(null, 'NEXT');
+                        changeGameState(null, currentGameState);
                     }
                     // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
                     else if (activePlayer.anyMonstersActive()) {
@@ -432,7 +432,7 @@ function skippedDefending_StateChange() {
     if (!inactivePlayer.anyConsciousMonsters()) {
         console.log('The inactive player has no conscious monsters after attacking.');
         currentGameState = GAME_STATES[7];
-        changeGameState(null, 'NEXT');
+        changeGameState(null, currentGameState);
     }
     // If the active player has any monsters remaining that are capable of attacking and the game isn't over, return to the state that allows them to select another monster to attack with.
     else if (activePlayer.anyMonstersActive()) {
@@ -580,7 +580,8 @@ function renderDiscard() {
     }
 }
 
-function renderGameOverState() {
+function renderGameOver() {
+    console.log('renderGameOver has run');
     gameOverEl.children[0].children[0].innerHTML = `${activePlayer.name} Wins!`
     gameOverEl.style.display = 'flex';
 }

@@ -91,7 +91,7 @@ class Monster {
     constructor(name, imgSrc) {
         this.name = name;
         this.imgSrc = imgSrc;
-        this.health = 10;
+        this.health = 1;
         this.attack = 0;
         this.defense = 1;
 
@@ -143,9 +143,9 @@ class Player {
         this.deck.shuffleStarterDeck();
 
         this.monsters = [
-            new Monster('Monster 1', 'assets/monsters/monster1.png'),
-            new Monster('Monster 2', 'assets/monsters/monster2.png'),
-            new Monster('Monster 3', 'assets/monsters/monster3.png')
+            new Monster(`${this.name}'s Monster 1`, 'assets/monsters/monster1.png'),
+            new Monster(`${this.name}'s Monster 2`, 'assets/monsters/monster2.png'),
+            new Monster(`${this.name}'s Monster 3`, 'assets/monsters/monster3.png')
         ];
     }
 
