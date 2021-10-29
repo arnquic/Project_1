@@ -76,18 +76,16 @@ function init() {
 
     let randomPlayer = Math.floor((Math.random() * 2) + 1);
     if (randomPlayer === 1) {
-        activePlayer = new Player('Jake');
-        inactivePlayer = new Player('Anna');
+        activePlayer = new Player('Player 1');
+        inactivePlayer = new Player('Player 2');
     } else if (randomPlayer === 2) {
-        activePlayer = new Player('Anna');
-        inactivePlayer = new Player('Jake');
+        activePlayer = new Player('Player 2');
+        inactivePlayer = new Player('Player 1');
     }
     renderInit();
     activePlayerDrawEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }), { once: true, signal: currentNonUniqueStateController.signal };
     howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
     resetBtn.addEventListener('click', reset);
-    nextStateBtn.addEventListener('click', function () { console.log("here's some testy stuff.") }, { signal: howToBtnController.signal });
-    nextStateBtn.style.display = 'initial';
     console.log('init function has run.');
 }
 
@@ -459,6 +457,7 @@ function discard_StateChange(event) {
     swapActivePlayer();
     renderDiscard();
     renderHand();
+    renderMonsterUpdates();
     renderGameStateIndicators();
     renderNextStateBtn('none', 'none', 'black');
 }
@@ -522,6 +521,12 @@ function renderMonsterUpdates() {
         else {
             activePlayerMonstersEl.children[i].style.opacity = 0.6;
         }
+        // If the monster is subdued, change their background to red.
+        if (activePlayer.monsters[i].health === 0) {
+            activePlayerMonstersEl.children[i].style.backgroundColor = 'red';
+        } else {
+            activePlayerMonstersEl.children[i].style.backgroundColor = 'grey';
+        }
         // ---- Inactive Player ----
         //Update Name
         inactivePlayerMonstersEl.children[i].children[0].innerHTML = `${inactivePlayer.monsters[i].name}`;
@@ -537,6 +542,12 @@ function renderMonsterUpdates() {
         }
         else {
             inactivePlayerMonstersEl.children[i].style.opacity = 0.6;
+        }
+        // If the monster is subdued, change their background to red.
+        if (inactivePlayer.monsters[i].health === 0) {
+            inactivePlayerMonstersEl.children[i].style.backgroundColor = 'darkred';
+        } else {
+            inactivePlayerMonstersEl.children[i].style.backgroundColor = 'grey';
         }
     }
 }

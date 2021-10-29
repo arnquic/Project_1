@@ -171,7 +171,12 @@ class Player {
 
     makeMonstersActive() {
         for (let i = 0; i < this.monsters.length; i++) {
-            this.monsters[i].isActive = true;
+            if (this.monsters[i].health > 0) {
+                this.monsters[i].isActive = true;
+            }
+            else {
+                this.monsters[i].isActive = false;
+            }
         }
     }
 }
