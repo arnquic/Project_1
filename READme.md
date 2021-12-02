@@ -18,7 +18,7 @@ The objective of the game is to subdue all of your opponent's monsters before th
         + Health = 10
         + Attack = 0;
         + Defense = 1;
-        + Special = 0;
+        + *(Stretch Goal)* Special = 0;
 * <u>Draw turn state:</u> During their turn, the active player will draw 5 cards from their draw pile. If there are not enough cards in that player's draw pile, their discard pile will be shuffled and appended to their draw pile.
 * <u>*(Stretch Goal)* Deck Supplement turn state:</u> If any cards remain in any of the 3 pickable card piles, the player may select the top card from one pile and place it in their discard pile.
 * <u>Monster Supplement turn state:</u> The active player then must play 3 of the cards in their hand. Each played card is applied to one monster, increasing the indicated stat (attack, defense, *(Stretch Goal)* or special) of that monster by the amount indicated on the card.
@@ -137,6 +137,7 @@ How to technically fulfill the game (e.g., function to deal cards)
     2. Monster 1's image is taken from "Icons 8" at: https://icons8.com/icon/3upVYuQvJuuB/monster-face
     3. Monster 2's image is taken from "Icons 8" at: https://icons8.com/icon/Hgs0qUeISUyd/monster
     4. Monster 3's image is taken from "Icons 8" at: https://img.icons8.com/ios/50/000000/mongrol.png
+    5. Shuffle deck method in the Deck class has been modified from solution posted on: https://javascript.info/task/shuffle
 
 ### <u>Intellectual Property Claim</u>
 Created and owned by C. Jake Arnquist as of date of first github commit (12 Oct. 2021).

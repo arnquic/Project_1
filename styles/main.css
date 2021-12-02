@@ -158,17 +158,27 @@
 }
 
 #inactivePlayer img {
-    width: 7vw;
+    width: 10vmin;
     height: auto;
+}
+
+#inactivePlayer .monsterImage img {
+    height: 6vmin;
+    width: auto;
 }
 
 #activePlayer img {
-    width: 8vw;
+    width: 10vmin;
     height: auto;
 }
 
+#activePlayer .monsterImage img {
+    height: 6vmin;
+    width: auto;
+}
+
 #pickableCards img {
-    width: 8vw;
+    width: 10vmin;
     height: auto;
 }
 

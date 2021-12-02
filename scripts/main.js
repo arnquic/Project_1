@@ -15,6 +15,30 @@ const GAME_STATES = [
     'HOW TO PLAY'
 ];
 
+// --------------------------------------------------------
+// | State Declarations. One for each possible game state.
+// --------------------------------------------------------
+const draw = new State("Draw", [selectHandCard]);
+const selectHandCard = new State("Select a card from your hand to play", renderHandPlay)
+const playCard = new State("Select an allied monster to play the card on", renderPlayCard)
+const attackWith = new State("Select an allied monster to attack with", renderAttackWith);
+const enemyToAttack = new State("Select an enemy monster to attack", renderEnemyToAttack);
+const defend = new State("Defend", renderDefend);
+const discard = new State("Discard", renderDiscard);
+const gameOver = new State("Game Over", renderGameOver);
+const howToPlay = new State("How to Play", renderHowToPlay);
+
+// Set the other states that each state could transition to.
+draw.addConnectedStates([selectHandCard, howToPlay]);
+selectHandCard.addConnectedStates([playCard, howToPlay]);
+playCard.addConnectedStates([attackWith, howToPlay]);
+attackWith.addConnectedStates([enemyToAttack, discard, howToPlay]);
+enemyToAttack.addConnectedStates([defend, discard, gameOver, howToPlay]);
+defend.addConnectedStates([attackWith, discard, gameOver, howToPlay]);
+discard.addConnectedStates([draw, howToPlay]);
+gameOver.addConnectedStates([]);
+howToPlay.addConnectedStates([draw, selectHandCard, playCard, attackWith, enemyToAttack, defend, discard, gameOver]);
+
 // Global State Variables
 let currentGameState;
 let lastGameState;
@@ -167,7 +191,7 @@ function howTo_StateChange(destinationState) {
         lastGameState = null;
         howToPlayBtn.addEventListener('click', function (event) { changeGameState(event, "HOW TO PLAY") }, { once: true, signal: howToBtnController.signal });
     }
-    renderHowTo(destinationState);
+    renderHowToPlay(destinationState);
 }
 
 function draw_StateChange() {
@@ -503,7 +527,7 @@ function renderGameStateIndicators() {
     turnStateIndicatorEl.innerHTML = `${currentGameState}`.bold();
 }
 
-function renderHowTo(destinationState) {
+function renderHowToPlay(destinationState) {
     // Executes on howToPlayBtn click. User wants the instructions to be displayed.
     if (destinationState === 'HOW TO PLAY') {
         howToPlayInstEl.style.display = 'flex';
