@@ -7,7 +7,14 @@ class StateMachine {
     advanceState(targetState) {
         for (let i = 0; i < this.currentState.getConnectedStates.length; i++) {
             if (targetState === this.currentState.getConnectedStates[i]) {
-                setCurrentState(this.currentState.getConnectedStates[i]);
+                if (targetState.getRenderStyle() === State.RENDER_STYLES[0]) {
+                    this.setCurrentState(this.currentState.getConnectedStates[i]);
+                    this.currentState.renderState();
+                }
+                else if (this.currentState.getRenderStyle() === State.RENDER_STYLES[1]) {
+                    this.currentState.renderState();
+                    this.setCurrentState(this.currentState.getConnectedStates[i]);
+                }
             }
             else {
                 console.log("State advancement error. Invalid target state. Not contained within the current state's connected states.");
@@ -33,10 +40,25 @@ class StateMachine {
 }
 
 class State {
-    constructor(stateName, renderStateFunc, connectedStates = Array(0)) {
+
+    static RENDER_STYLES = [
+        "On Entry",
+        "On Exit"
+    ]
+
+    constructor(stateName, renderStyle, renderStateFunc, connectedStates = Array(0)) {
         this.stateName = stateName;
-        this.connectedStates = connectedStates;
+        this.renderStyle = renderStyle;
         this.renderStateFunc = renderStateFunc;
+        this.connectedStates = connectedStates;
+    }
+
+    getStateName() {
+        return this.stateName;
+    }
+
+    getRenderStyle() {
+        return this.renderStyle;
     }
 
     addConnectedStates(stateArr) {
@@ -56,5 +78,9 @@ class State {
 
     getConnectedStates() {
         return this.connectedStates;
+    }
+
+    renderState() {
+        this.renderStateFunc();
     }
 }
