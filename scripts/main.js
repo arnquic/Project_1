@@ -390,6 +390,7 @@ function opportunityToDefend_StateChange(event) {
         // Check which monster was selected. NOTE: the player.monsters.length is the same length as the activePlayerMonstersEl.children.length.
         for (let i = 0; i < inactivePlayer.monsters.length; i++) {
             if (individualMonsterEl === inactivePlayerMonstersEl.children[i]) {
+                // If the selected monster is active, allow that monster to defend.
                 if (inactivePlayer.monsters[i].isActive) {
                     defendingMonsterIndex = i;
                     console.log("the defending monster is: ", inactivePlayerMonstersEl.children[defendingMonsterIndex]);
@@ -423,13 +424,21 @@ function opportunityToDefend_StateChange(event) {
                         activateNextStateBtn("Discard your hand");
                     }
                 }
+                // If the selected monster isn't active, reactivate the defending monster selection and 
+                else {
+                    // Activate the event listener for the inactivePlayer to choose a monster to defend with.
+                    currentNonUniqueStateController = new AbortController();
+                    inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT', false) }, { once: true, signal: currentNonUniqueStateController.signal });
+                    // Activate the event listener for the opposing player to choose not to defend.
+                    activateNextStateBtn("Skip defending");
+                }
             }
         }
     }
     // If the findMonsterEl function does return 'too high', reactivate the monster event listener to wait for an individual monster element to be clicked.
     else {
         currentNonUniqueStateController = new AbortController();
-        activePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT') }, { once: true, signal: currentNonUniqueStateController.signal });
+        inactivePlayerMonstersEl.addEventListener('click', function (event) { changeGameState(event, 'NEXT', false) }, { once: true, signal: currentNonUniqueStateController.signal });
         // Activate the event listener for the opposing player to choose not to defend.
         activateNextStateBtn("Skip defending");
     }

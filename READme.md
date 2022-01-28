@@ -5,6 +5,8 @@ Deck is a minimalistic take on the two-player turn-based card game. It is intend
 
 The objective of the game is to subdue all of your opponent's monsters before they subdue yours.
 
+Deployed on Github Pages! Try it here: https://arnquic.github.io/Project_1/
+
 ## Game Rules
 * <u>Game Start:</u>
     - *(MVP)* Each player starts with the same deck of nine (10) shuffled cards:
