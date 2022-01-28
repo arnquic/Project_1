@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 #gameViewPort {
     position: fixed;
     top: 0;
@@ -6,21 +11,38 @@
     height: 100%;
     display: grid;
     background-color: royalblue;
-    grid-template: 7% 93% / 100%;
+    grid-template-rows: 7vh 93vh;
+    grid-template-columns: 100vw;
 }
 
 #info {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-row: 1;
+    grid-column: 1;
+    height: 100%;
+    width: 100%;
     display: grid;
-    grid-template: 100% / 50% 25% 25%;
+    grid-template-rows: 100%;
+    grid-template-columns: 50% 25% 25%;
     color: whitesmoke;
 }
 
 #gameStateIndicator {
     border: 2px solid black;
-    grid-area: 1 / 1 / 2 / 2;
-    display: block;
-    text-align: center;
+    grid-row: 1;
+    grid-column: 1;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: medium;
+}
+
+@media only screen and (max-width: 800px) {
+    #gameStateIndicator {
+        font-size: small;
+    }
 }
 
 #turnStateIndicator {
@@ -28,8 +50,11 @@
 }
 
 #howToPlayInfo {
+    grid-row: 1;
+    grid-column: 2;
+    height: 100%;
+    width: 100%;
     border: 2px solid black;
-    grid-area: 1 / 2 / 2 / 3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,32 +62,53 @@
 
 #reset {
     border: 2px solid black;
-    grid-area: 1 / 3 / 2 / 4;
+    grid-row: 1;
+    grid-column: 3;
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #mainGameBoard {
-    grid-area: 2 / 1 / 3 / 2;
+    grid-row: 2;
+    grid-column: 1;
+
+    height: 100%;
+    width: 100%;
+
     display: grid;
-    grid-template: 33% 33% 33% / 75% 25%;
+    grid-template-rows: 33.3% 33.3% 33.3%;
+    grid-template-columns: 75% 25%;
 }
 
 #inactivePlayer {
+    grid-row: 1;
+    grid-column: 1;
+    height: 100%;
+    width: 100%;
     border: 2px solid black;
-    grid-area: 1 / 1 / 1 / 2;
     display: grid;
-    grid-template: 1fr / 1fr 3fr 1fr;
+    grid-template-rows: 100%;
+    grid-template-columns: 20% 60% 20%;
 }
 
 #inactivePlayerDraw {
+    grid-row: 1;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #inactivePlayerMonsters {
+    grid-row: 1;
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-evenly;
@@ -70,65 +116,100 @@
 }
 
 #inactivePlayerDiscard {
+    grid-row: 1;
+    grid-column: 3;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #activePlayer {
+    grid-row: 2 / 4;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
     border: 2px solid black;
-    grid-area: 2 / 1 / 4 / 2;
     display: grid;
-    grid-template: 50% 50% / 20% 60% 20%;
+    grid-template-rows: 50% 50%;
+    grid-template-columns: 20% 60% 20%;
 }
 
 #activePlayerDiscard {
-    grid-area: 1 / 1 / 3 / 2;
+    grid-row: 1 / 3;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #activePlayerMonsters {
-    grid-area: 1 / 2 / 2 / 3;
+    grid-row: 1 / 2;
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
 
 #activePlayerHand {
-    grid-area: 2 / 2 / 3 / 3;
+    grid-row: 2 / 3;
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
     display: none;
     justify-content: center;
     align-items: center;
 }
 
 #activePlayerDraw {
-    grid-area: 1 / 3 / 3 / 4;
+    grid-row: 1 / 3;
+    grid-column: 3;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #rightSideBar {
-    grid-area: 1 / 2 / 4 / 3;
+    grid-row: 1 / 4;
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
     display: grid;
-    grid-template: 75% 25% / 100%;
+    grid-template-rows: 75% 25%;
+    grid-template-columns: 100%;
 }
 
 #pickableCards {
+    grid-row: 1 ;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
     border: 2px solid black;
-    grid-area: 1 / 1 / 2 / 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4%;
+
+    display: grid;
+    grid-template-rows: 33.3% 33.3% 33.3%;
+    grid-template-columns: 100%;
+}
+
+.pickableCardHolder {
+    border: 2px solid yellow;
+    width: 100%;
+    height: 100%;
 }
 
 #nextState {
+    grid-row: 2;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
     border: 2px solid black;
-    grid-area: 2 / 1 / 3 / 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -145,9 +226,18 @@
     background-color: grey;
     border: 1px solid black;
     border-radius: 5px;
+    font-size: medium;
+}
+
+@media only screen and (max-width: 800px) {
+    .monsterCard {
+        font-size: small;
+    } 
 }
 
 .monsterImage {
+    width: 100%;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -158,17 +248,51 @@
 }
 
 #inactivePlayer img {
-    width: 7vw;
+    width: 60%;
     height: auto;
+}
+
+#inactivePlayer #inactivePlayerMonsters img {
+    width: 50%;
+    height: auto;
+}
+
+@media only screen and (min-width: 1800px) {
+    #inactivePlayer img {
+        height: 300px;
+        width: auto;
+    }
 }
 
 #activePlayer img {
-    width: 8vw;
+    width: 60%;
     height: auto;
 }
 
+#activePlayer #activePlayerMonsters img {
+    width: 50%;
+    height: auto;
+}
+
+#activePlayer #activePlayerHand img {
+    width: 20%;
+    height: auto;
+}
+
+@media only screen and (min-width: 1800px) {
+    #activePlayer img {
+        height: 300px;
+        width: auto;
+    }
+
+    #activePlayer #activePlayerHand img {
+        height: 300px;
+        width: auto;
+    }
+}
+
 #pickableCards img {
-    width: 8vw;
+    width: 80%;
     height: auto;
 }
 
@@ -199,7 +323,13 @@
 #instructions {
     background-color: rgba(0, 0, 0, 0.87);
     border: 5px solid rgb(63, 63, 63);
-    padding: 15px;
+    padding: 50px;
     color: whitesmoke;
-    font-size: 85%;
+    font-size: 18px;
+}
+
+@media only screen and (max-width: 800px) {
+    #instructions {
+        font-size: 55%;
+    }  
 }
